@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Mundo Anónimamente - Espacio Seguro y Chat</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            darkBg: '#0a0a0f',
+                            cardBg: '#121218',
+                            glassBg: 'rgba(18, 18, 24, 0.85)',
+                            aqua: '#7FFFD4',
+                            aquaDark: '#00f2fe',
+                            sky: '#87CEEB',
+                            pink: '#FFB6C1',
+                            purple: '#c77dff',
+                            purpleLight: '#DDA0DD'
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['Outfit', 'sans-serif'],
+                        body: ['Poppins', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'glow-aqua': '0 0 25px -5px rgba(127, 255, 212, 0.35)',
+                        'glow-pink': '0 0 25px -5px rgba(255, 182, 193, 0.35)',
+                        'glow-purple': '0 0 25px -5px rgba(199, 125, 255, 0.35)',
+                        'glow-sky': '0 0 25px -5px rgba(135, 206, 235, 0.35)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0a0a0f;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+
+        .font-heading {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* Title Gradient */
+        .gradient-title {
+            background: linear-gradient(135deg, #7FFFD4 0%, #87CEEB 35%, #FFB6C1 70%, #c77dff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gradient-border-card {
+            position: relative;
+            border-radius: 1.75rem;
+            background: linear-gradient(#121218, #121218) padding-box,
+                        linear-gradient(135deg, #7FFFD4, #87CEEB, #FFB6C1, #c77dff) border-box;
+            border: 2px solid transparent;
+        }
+
+        .btn-rounded {
+            border-radius: 30px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0f;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #232330;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7FFFD4;
+        }
+
+        /* Glassmorphism elements */
+        .glass-card {
+            background: rgba(18, 18, 24, 0.82);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Ambient Glow Blobs */
+        .blob {
+            position: absolute;
+            filter: blur(100px);
+            opacity: 0.22;
+            z-index: 0;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* Typing Dot Pulse Animation */
+        .typing-dot {
+            animation: typingAnimation 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingAnimation {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between relative selection:bg-brand-aqua selection:text-brand-darkBg">
+
+    <!-- Background Ambient Glows -->
+    <div class="blob w-96 h-96 bg-brand-aqua top-10 -left-20 animate-pulse"></div>
+    <div class="blob w-96 h-96 bg-brand-purple top-1/3 -right-20 animate-pulse" style="animation-delay: 2s;"></div>
+    <div class="blob w-96 h-96 bg-brand-pink bottom-1/4 left-1/3 animate-pulse" style="animation-delay: 4s;"></div>
+
+    <!-- 1. REGISTRATION MODAL / OVERLAY (SCREEN 1) -->
+    <div id="authOverlay" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-darkBg/95 backdrop-blur-xl transition-all duration-500">
+        <div class="max-w-md w-full glass-card rounded-3xl p-6 sm:p-8 border border-brand-aqua/40 shadow-glow-aqua relative overflow-hidden">
+            
+            <div class="text-center mb-6">
+                <!-- Logo Image inserted into Auth Modal -->
+                <div class="relative w-24 h-24 mx-auto mb-3">
+                    <img src="logo.png" alt="Logo MMA" class="w-24 h-24 rounded-full object-cover border-2 border-brand-aqua shadow-glow-aqua p-1 bg-brand-cardBg">
+                </div>
+                <h1 class="font-heading font-black text-2xl sm:text-3xl text-white tracking-wide">
+                    MI MUNDO <span class="gradient-title">ANÓNIMAMENTE</span>
+                </h1>
+                <p class="text-gray-300 text-xs sm:text-sm mt-1">Registro seguro para estudiantes</p>
+            </div>
+
+            <div class="bg-brand-darkBg/80 rounded-2xl p-4 border border-brand-aqua/20 mb-6 text-xs text-gray-300 space-y-2">
+                <div class="flex items-center gap-2 text-brand-aqua font-semibold">
+                    <i class="fa-solid fa-lock text-sm"></i>
+                    <span>Privacidad Protegida</span>
+                </div>
+                <p class="leading-relaxed">
+                    Tus datos se mantienen strictly resguardados. Podrás elegir entre publicar o chatear de forma <strong class="text-brand-aqua">Totalmente Anónima</strong> o con <strong class="text-brand-pink">Tu Nombre Real</strong>.
+                </p>
+            </div>
+
+            <form id="registrationForm" onsubmit="handleRegistration(event)" class="space-y-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label for="regNombre" class="block text-xs font-semibold text-gray-300 mb-1">Nombre *</label>
+                        <input type="text" id="regNombre" required placeholder="Ej. Valentina" class="w-full bg-brand-darkBg border border-gray-700 rounded-2xl px-4 py-2.5 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-aqua transition-all">
+                    </div>
+                    <div>
+                        <label for="regApellido" class="block text-xs font-semibold text-gray-300 mb-1">Apellido *</label>
+                        <input type="text" id="regApellido" required placeholder="Ej. Morales" class="w-full bg-brand-darkBg border border-gray-700 rounded-2xl px-4 py-2.5 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-aqua transition-all">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="regCurso" class="block text-xs font-semibold text-gray-300 mb-1">Curso / Grado *</label>
+                    <input type="text" id="regCurso" required placeholder="Ej. 10° A / Grado 11" class="w-full bg-brand-darkBg border border-gray-700 rounded-2xl px-4 py-2.5 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-sky transition-all">
+                </div>
+
+                <div>
+                    <label for="regCorreo" class="block text-xs font-semibold text-gray-300 mb-1">Correo Electrónico *</label>
+                    <input type="email" id="regCorreo" required placeholder="estudiante@colegio.edu" class="w-full bg-brand-darkBg border border-gray-700 rounded-2xl px-4 py-2.5 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-purple transition-all">
+                </div>
+
+                <button type="submit" class="w-full mt-2 py-3.5 btn-rounded bg-gradient-to-r from-brand-aqua via-brand-sky to-brand-purple text-brand-darkBg font-extrabold text-sm sm:text-base hover:opacity-90 transition-all duration-300 transform hover:scale-[1.01] shadow-glow-aqua flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    Ingresar al Espacio Seguro
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- LOGOUT CONFIRMATION MODAL -->
+    <div id="logoutModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-darkBg/90 backdrop-blur-md hidden transition-all duration-300">
+        <div class="max-w-sm w-full glass-card rounded-3xl p-6 border border-brand-pink/40 shadow-glow-pink text-center">
+            <div class="w-12 h-12 btn-rounded bg-brand-pink/20 text-brand-pink mx-auto flex items-center justify-center text-xl mb-3">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </div>
+            <h3 class="font-heading font-extrabold text-xl text-white mb-2">¿Cerrar Sesión?</h3>
+            <p class="text-xs text-gray-300 mb-6">Tu sesión actual se cerrará y serás redirigido a la pantalla de registro de manera segura.</p>
+            <div class="flex items-center gap-3">
+                <button onclick="cancelLogout()" class="flex-1 py-2.5 btn-rounded border border-gray-700 text-gray-300 hover:text-white hover:bg-gray-800 text-xs font-semibold transition-all">
+                    Cancelar
+                </button>
+                <button onclick="confirmLogout()" class="flex-1 py-2.5 btn-rounded bg-brand-pink text-brand-darkBg font-bold text-xs hover:opacity-90 transition-all shadow-glow-pink">
+                    Sí, Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER / NAVBAR -->
+    <header class="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <img src="logo.png" alt="Logo MMA" class="w-11 h-11 rounded-full object-cover border border-brand-aqua shadow-glow-aqua p-0.5 bg-brand-cardBg">
+            <span class="font-heading font-extrabold text-xl sm:text-2xl tracking-tight text-white">
+                MI MUNDO <span class="gradient-title">ANÓNIMAMENTE</span>
+            </span>
+        </div>
+
+        <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
+            <a href="#formulario" class="hover:text-brand-aqua transition-colors">Enviar Mensaje & Chat</a>
+            <a href="#muro" class="hover:text-brand-sky transition-colors">Muro de Apoyo</a>
+            <a href="#familias" class="hover:text-brand-pink transition-colors">Compromiso Familiar</a>
+        </nav>
+
+        <div class="flex items-center gap-3">
+            <div id="userBadge" class="hidden sm:flex items-center gap-2 bg-brand-cardBg px-4 py-2 btn-rounded border border-brand-aqua/30 text-xs">
+                <span class="w-2.5 h-2.5 rounded-full bg-brand-aqua animate-pulse"></span>
+                <span class="text-gray-300">Estudiante: <strong id="studentDisplay" class="text-brand-aqua">Anónimo</strong></span>
+            </div>
+            
+            <button id="logoutBtn" onclick="promptLogout()" class="hidden flex items-center gap-2 px-4 py-2 btn-rounded border border-brand-pink/50 text-brand-pink hover:bg-brand-pink/10 transition-all text-xs font-semibold shadow-glow-pink">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span class="hidden md:inline">Cerrar Sesión</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-12 text-center">
+        <div class="w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-6 relative group">
+            <div class="absolute inset-0 rounded-full bg-gradient-to-r from-brand-aqua via-brand-pink to-brand-purple blur-md opacity-50 group-hover:opacity-80 transition-opacity"></div>
+            <img src="logo.png" alt="Logo Mi Mundo Anónimamente" class="relative z-10 w-full h-full rounded-full object-cover border-2 border-brand-aqua/60 shadow-2xl p-1 bg-brand-darkBg">
+        </div>
+
+        <div class="inline-flex items-center gap-2 px-4 py-2 btn-rounded bg-brand-cardBg border border-brand-aqua/30 mb-6 shadow-glow-aqua">
+            <i class="fa-solid fa-shield-halved text-brand-aqua text-sm"></i>
+            <span class="text-xs sm:text-sm font-medium text-brand-aqua">Sin miedo • Sin vergüenza • 100% Anónimo</span>
+        </div>
+
+        <h1 class="font-heading text-4xl sm:text-6xl md:text-7xl font-black tracking-tight leading-none mb-6">
+            <span class="block text-white mb-2">Escribe tus inquietudes en</span>
+            <span class="gradient-title uppercase tracking-wider">MI MUNDO ANÓNIMAMENTE</span>
+        </h1>
+
+        <p class="text-gray-300 text-base sm:text-lg max-w-3xl mx-auto font-light leading-relaxed mb-8">
+            Expresa tus problemas, dudas o quejas de forma protegida. Elige publicar anónimamente o con tu nombre, y accede a un grupo de apoyo o chat privado con orientadores y docentes.
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href="#formulario" class="w-full sm:w-auto px-8 py-4 btn-rounded bg-brand-aqua text-brand-darkBg font-bold text-base hover:bg-opacity-90 transition-all transform hover:-translate-y-1 shadow-glow-aqua flex items-center justify-center gap-2">
+                <i class="fa-solid fa-paper-plane"></i>
+                Enviar Mensaje / Abrir Chat
+            </a>
+            <a href="#familias" class="w-full sm:w-auto px-8 py-4 btn-rounded border border-brand-purple text-brand-purpleLight hover:bg-brand-purple hover:text-brand-darkBg font-bold text-base transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-people-roof"></i>
+                Compromiso Familiar
+            </a>
+        </div>
+    </section>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20 mb-20">
+
+        <!-- MESSAGE SUBMISSION & CHAT SELECTION FORM -->
+        <section id="formulario" class="scroll-mt-10">
+            <div class="gradient-border-card p-6 sm:p-10 shadow-2xl">
+                <div class="max-w-3xl mx-auto">
+                    <div class="text-center mb-8">
+                        <span class="text-brand-sky font-semibold text-xs tracking-widest uppercase">Canal Confidencial</span>
+                        <h2 class="font-heading text-3xl sm:text-4xl font-extrabold text-white mt-1">Envía tu Mensaje o Inicia un Chat</h2>
+                        <p class="text-gray-400 text-xs sm:text-sm mt-1">Elige cómo deseas expresarte y quién puede acompañarte.</p>
+                    </div>
+
+                    <form id="messageForm" onsubmit="handleFormSubmit(event)" class="space-y-6">
+                        
+                        <!-- Identity Toggle Choice -->
+                        <div class="bg-brand-darkBg/90 p-4 rounded-2xl border border-brand-aqua/30 shadow-glow-aqua">
+                            <label class="block text-xs sm:text-sm font-semibold text-brand-aqua mb-2">
+                                <i class="fa-solid fa-user-gear mr-1"></i> Modo de Envío e Identidad:
+                            </label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="identityMode" value="anonymous" class="peer hidden" checked>
+                                    <div class="p-3 rounded-xl bg-brand-cardBg border border-gray-800 peer-checked:border-brand-aqua peer-checked:bg-brand-aqua/10 transition-all flex items-center gap-3">
+                                        <div class="w-8 h-8 btn-rounded bg-brand-aqua/20 text-brand-aqua flex items-center justify-center shrink-0">
+                                            <i class="fa-solid fa-user-ninja"></i>
+                                        </div>
+                                        <div>
+                                            <span class="block text-xs font-bold text-white">🎭 Totalmente Anónimo</span>
+                                            <span class="block text-[10px] text-gray-400">Tu nombre no aparecerá públicamente.</span>
+                                        </div>
+                                    </div>
+                                </label>
+
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="identityMode" value="realName" class="peer hidden">
+                                    <div class="p-3 rounded-xl bg-brand-cardBg border border-gray-800 peer-checked:border-brand-pink peer-checked:bg-brand-pink/10 transition-all flex items-center gap-3">
+                                        <div class="w-8 h-8 btn-rounded bg-brand-pink/20 text-brand-pink flex items-center justify-center shrink-0">
+                                            <i class="fa-solid fa-id-card"></i>
+                                        </div>
+                                        <div>
+                                            <span class="block text-xs font-bold text-white">👤 Con Mi Nombre Real</span>
+                                            <span class="block text-[10px] text-gray-400">Publicar con tu registro (<span id="identityPreview" class="text-brand-pink">Estudiante</span>).</span>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Category Selection -->
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-gray-300 mb-3">1. Selecciona la categoría de tu mensaje:</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="category" value="Problema Personal" class="peer hidden" checked>
+                                    <div class="p-3 text-center rounded-2xl bg-brand-darkBg border border-gray-800 peer-checked:border-brand-pink peer-checked:bg-brand-pink/10 peer-checked:text-brand-pink transition-all">
+                                        <i class="fa-solid fa-heart-crack block text-lg mb-1"></i>
+                                        <span class="text-xs font-semibold">Problema</span>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="category" value="Queja / Inconformidad" class="peer hidden">
+                                    <div class="p-3 text-center rounded-2xl bg-brand-darkBg border border-gray-800 peer-checked:border-brand-aqua peer-checked:bg-brand-aqua/10 peer-checked:text-brand-aqua transition-all">
+                                        <i class="fa-solid fa-triangle-exclamation block text-lg mb-1"></i>
+                                        <span class="text-xs font-semibold">Queja</span>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="category" value="Sugerencia" class="peer hidden">
+                                    <div class="p-3 text-center rounded-2xl bg-brand-darkBg border border-gray-800 peer-checked:border-brand-sky peer-checked:bg-brand-sky/10 peer-checked:text-brand-sky transition-all">
+                                        <i class="fa-solid fa-lightbulb block text-lg mb-1"></i>
+                                        <span class="text-xs font-semibold">Sugerencia</span>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="category" value="Otro Asunto" class="peer hidden">
+                                    <div class="p-3 text-center rounded-2xl bg-brand-darkBg border border-gray-800 peer-checked:border-brand-purple peer-checked:bg-brand-purple/10 peer-checked:text-brand-purple transition-all">
+                                        <i class="fa-solid fa-comment-dots block text-lg mb-1"></i>
+                                        <span class="text-xs font-semibold">Otro</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Message Body -->
+                        <div>
+                            <label for="messageText" class="block text-xs sm:text-sm font-medium text-gray-300 mb-2">2. Escribe tu mensaje confidencial:</label>
+                            <textarea id="messageText" rows="4" required placeholder="Escribe aquí lo que sientes, tus dudas o problemas..." class="w-full bg-brand-darkBg border border-gray-800 rounded-2xl p-4 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-brand-aqua transition-all resize-none"></textarea>
+                        </div>
+
+                        <!-- Chat Mode Choice -->
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-gray-300 mb-3">3. Modalidad de Conversación / Chat:</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="chatType" value="group" class="peer hidden" checked onchange="togglePrivateOptions(false)">
+                                    <div class="p-4 rounded-2xl bg-brand-darkBg border border-gray-800 peer-checked:border-brand-aqua peer-checked:bg-brand-aqua/10 transition-all flex items-start gap-3">
+                                        <div class="w-10 h-10 btn-rounded bg-brand-aqua/20 text-brand-aqua flex items-center justify-center shrink-0 mt-0.5">
+                                            <i class="fa-solid fa-users"></i>
+                                        </div>
+                                        <div>
+                                            <span class="block text-sm font-bold text-white">Grupo de Apoyo</span>
+                                            <span class="block text-xs text-gray-400 mt-1">Unirse a una sala interactiva común con otros estudiantes e interlocutores.</span>
+                                        </div>
+                                    </div>
+                                </label>
+
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="chatType" value="private" class="peer hidden" onchange="togglePrivateOptions(true)">
+                                    <div class="p-4 rounded-2xl bg-brand-darkBg border border-gray-800 peer-checked:border-brand-purple peer-checked:bg-brand-purple/10 transition-all flex items-start gap-3">
+                                        <div class="w-10 h-10 btn-rounded bg-brand-purple/20 text-brand-purpleLight flex items-center justify-center shrink-0 mt-0.5">
+                                            <i class="fa-solid fa-user-lock"></i>
+                                        </div>
+                                        <div>
+                                            <span class="block text-sm font-bold text-white">Chat Privado</span>
+                                            <span class="block text-xs text-gray-400 mt-1">Conversación directa de 1 a 1 con un orientador o profesor.</span>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Private Chat Destinatary -->
+                        <div id="privateRecipientContainer" class="hidden transition-all duration-300">
+                            <label for="privateRecipient" class="block text-xs sm:text-sm font-medium text-gray-300 mb-2">Selecciona con quién deseas hablar en privado:</label>
+                            <select id="privateRecipient" class="w-full bg-brand-darkBg border border-gray-700 rounded-2xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:border-brand-purple">
+                                <option value="Psicorientador/a Escolar">🧠 Psicorientador/a Escolar</option>
+                                <option value="Docente / Profesor/a">📚 Docente / Profesor/a de Confianza</option>
+                                <option value="Coordinación Académica">🏢 Coordinación Académica</option>
+                                <option value="Compañero/a Mediador/a">🤝 Compañero/a Mediador/a Estudiantil</option>
+                            </select>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="pt-2">
+                            <button type="submit" class="w-full py-4 btn-rounded bg-gradient-to-r from-brand-aqua via-brand-sky to-brand-purple text-brand-darkBg font-extrabold text-base hover:opacity-95 transition-all shadow-glow-aqua flex items-center justify-center gap-3">
+                                <i class="fa-solid fa-paper-plane text-lg"></i>
+                                Publicar y Abrir Ventana de Chat
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAMILY COMMITMENT SECTION -->
+        <section id="familias" class="scroll-mt-10">
+            <div class="glass-card rounded-3xl p-6 sm:p-12 border border-brand-purple/30 relative overflow-hidden shadow-glow-purple">
+                <div class="absolute -right-10 -bottom-10 text-brand-purple/10 text-9xl pointer-events-none">
+                    <i class="fa-solid fa-people-roof"></i>
+                </div>
+
+                <div class="max-w-4xl mx-auto relative z-10">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 btn-rounded bg-brand-purple/20 text-brand-purple text-xs font-semibold mb-4">
+                        <i class="fa-solid fa-hands-holding-child"></i>
+                        Compromiso con las Familias
+                    </div>
+
+                    <h2 class="font-heading text-3xl sm:text-4xl font-extrabold text-white mb-6">
+                        Seguridad, Empatía y <span class="text-brand-purple">Tranquilidad Familiar</span>
+                    </h2>
+
+                    <div class="space-y-4 text-gray-300 leading-relaxed font-light text-sm sm:text-base">
+                        <p>
+                            Entendemos el bienestar estudiantil como una alianza firme entre la familia, la institución educativa y el estudiante. **Mi Mundo Anónimamente** garantiza un espacio de desahogo seguro para canalizar inquietudes académicas, personales y emocionales antes de que se transformen en crisis.
+                        </p>
+                        <p>
+                            Garantizamos a los padres y acudientes que la plataforma resguarda el registro del estudiante, permitiéndoles escribir con total libertad y recibir orientación oportuna de profesionales capacitados.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 pt-6 border-t border-gray-800">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 btn-rounded bg-brand-aqua/20 text-brand-aqua flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-shield-cat text-base"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-white font-semibold text-sm">Protección Activa</h3>
+                                <p class="text-gray-400 text-xs mt-1">Confidencialidad rigurosa para garantizar la confianza del estudiante.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 btn-rounded bg-brand-pink/20 text-brand-pink flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-heart-pulse text-base"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-white font-semibold text-sm">Atención Emocional</h3>
+                                <p class="text-gray-400 text-xs mt-1">Acompañamiento a tiempo contra el acoso escolar y la ansiedad.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 btn-rounded bg-brand-sky/20 text-brand-sky flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-people-group text-base"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-white font-semibold text-sm">Acompañamiento</h3>
+                                <p class="text-gray-400 text-xs mt-1">Conexión con orientadores docentes y equipos multidisciplinarios.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ANONYMOUS BOARD (MURO DE MENSAJES) -->
+        <section id="muro" class="scroll-mt-10">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                <div>
+                    <span class="text-brand-pink font-semibold text-xs tracking-widest uppercase">Publicaciones Recientes</span>
+                    <h2 class="font-heading text-3xl sm:text-4xl font-extrabold text-white mt-1">Muro de Expresión</h2>
+                    <p class="text-gray-400 text-xs sm:text-sm mt-1">Inquietudes compartidas por estudiantes en el portal.</p>
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="filterBoard('all')" class="board-filter-btn active px-4 py-2 btn-rounded text-xs font-semibold bg-white text-brand-darkBg transition-all">Todos</button>
+                    <button onclick="filterBoard('Problema Personal')" class="board-filter-btn px-4 py-2 btn-rounded text-xs font-semibold bg-brand-cardBg text-gray-300 hover:text-white border border-gray-800 transition-all">Problemas</button>
+                    <button onclick="filterBoard('Queja / Inconformidad')" class="board-filter-btn px-4 py-2 btn-rounded text-xs font-semibold bg-brand-cardBg text-gray-300 hover:text-white border border-gray-800 transition-all">Quejas</button>
+                    <button onclick="filterBoard('Sugerencia')" class="board-filter-btn px-4 py-2 btn-rounded text-xs font-semibold bg-brand-cardBg text-gray-300 hover:text-white border border-gray-800 transition-all">Sugerencias</button>
+                </div>
+            </div>
+
+            <!-- Posts Grid -->
+            <div id="postsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Javascript dynamic cards -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- CHAT MODAL / INTERFACE -->
+    <div id="chatModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-brand-darkBg/90 backdrop-blur-md hidden transition-all duration-300">
+        <div class="w-full max-w-2xl h-[85vh] glass-card rounded-3xl border border-brand-aqua/40 shadow-glow-aqua flex flex-col overflow-hidden relative">
+            
+            <!-- Chat Modal Header -->
+            <div class="px-6 py-4 bg-brand-darkBg/90 border-b border-gray-800 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div id="chatHeaderIcon" class="w-10 h-10 btn-rounded bg-brand-aqua text-brand-darkBg flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div>
+                        <h3 id="chatHeaderTitle" class="font-heading font-extrabold text-base sm:text-lg text-white">Grupo de Apoyo Anónimo</h3>
+                        <p id="chatHeaderSubtitle" class="text-xs text-brand-aqua">Participando como: 🎭 Estudiante Anónimo</p>
+                    </div>
+                </div>
+                <button onclick="closeChatModal()" class="w-9 h-9 btn-rounded bg-gray-800/80 text-gray-300 hover:text-white hover:bg-gray-700 flex items-center justify-center transition-all">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Chat Messages Display Area -->
+            <div id="chatMessagesBox" class="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4 bg-brand-darkBg/40">
+                <!-- Dynamic Chat Bubbles populated via Javascript -->
+            </div>
+
+            <!-- Typing Indicator Bar -->
+            <div id="typingIndicator" class="px-6 py-2 bg-brand-darkBg/60 text-xs text-gray-400 flex items-center gap-2 hidden">
+                <span id="typingName" class="text-brand-purpleLight font-semibold">Orientador/a</span> está escribiendo
+                <div class="flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-brand-purpleLight typing-dot"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-brand-purpleLight typing-dot"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-brand-purpleLight typing-dot"></span>
+                </div>
+            </div>
+
+            <!-- Chat Input Controls -->
+            <div class="p-4 bg-brand-darkBg/90 border-t border-gray-800">
+                <form id="chatReplyForm" onsubmit="sendChatMessage(event)" class="flex gap-2">
+                    <input type="text" id="chatInputText" required placeholder="Escribe un mensaje en el chat..." class="flex-1 bg-brand-darkBg border border-gray-700 rounded-2xl px-4 py-3 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-aqua">
+                    <button type="submit" class="px-6 btn-rounded bg-brand-aqua text-brand-darkBg font-bold text-sm hover:opacity-90 transition-all flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span class="hidden sm:inline">Enviar</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="relative z-10 border-t border-gray-800 bg-brand-darkBg py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <img src="logo.png" alt="MMA Logo" class="w-8 h-8 rounded-full object-cover border border-brand-aqua">
+                <span class="font-heading font-bold text-base text-white">Mi Mundo <span class="text-brand-aqua">Anónimamente</span></span>
+            </div>
+
+            <p class="text-xs text-gray-500 text-center">
+                &copy; 2026 Plataforma de Convivencia y Apoyo Estudiantil. Encriptado & Confidencial.
+            </p>
+
+            <div class="flex items-center space-x-4 text-xs text-gray-400">
+                <span class="flex items-center gap-1"><i class="fa-solid fa-user-ninja text-brand-aqua"></i> Anónimo</span>
+                <span class="flex items-center gap-1"><i class="fa-solid fa-lock text-brand-purple"></i> Seguro</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE JAVASCRIPT CODE -->
+    <script>
+        // Registered User Data
+        let currentUser = null;
+
+        // Sample Wall Posts Data
+        let posts = [
+            {
+                id: 1,
+                authorName: "🎭 Anónimo/a",
+                category: "Problema Personal",
+                content: "A veces la presión escolar de este semestre me produce mucha ansiedad y no sé con quién hablar sin parecer débil.",
+                theme: "pink",
+                time: "Hace 20 min",
+                likes: 12
+            },
+            {
+                id: 2,
+                authorName: "👤 Camila R. (11° B)",
+                category: "Queja / Inconformidad",
+                content: "Siento que hay docentes que no están respetando los tiempos acordados para las evaluaciones acumulativas.",
+                theme: "aqua",
+                time: "Hace 1 hora",
+                likes: 24
+            },
+            {
+                id: 3,
+                authorName: "🎭 Anónimo/a",
+                category: "Sugerencia",
+                content: "Deberían organizar más talleres grupales sobre manejo del estrés y salud mental.",
+                theme: "sky",
+                time: "Hace 3 horas",
+                likes: 31
+            }
+        ];
+
+        // Active Chat State
+        let activeChatSession = {
+            type: 'group', // 'group' or 'private'
+            recipient: '',
+            senderName: '🎭 Estudiante Anónimo',
+            messages: []
+        };
+
+        // Automatic responses dictionary for simulated replies
+        const simulatedResponses = {
+            "Psicorientador/a Escolar": [
+                "Hola. Aprecio mucho tu valentía al compartir esto con nosotros. Estoy aquí para escucharte sin juzgarte.",
+                "Recuerda que lo que sientes es perfectamente válido. ¿Te gustaría que busquemos juntos alguna estrategia para afrontarlo?"
+            ],
+            "Docente / Profesor/a": [
+                "Gracias por manifestar esta inquietud. Como docentes, nos interesa mucho que se sientan tranquilos en el aula.",
+                "Tomaré nota de esto para conversarlo en el equipo académico preservando tu confianza."
+            ],
+            "Coordinación Académica": [
+                "Mensaje recibido en Coordinación. Revisaremos la situación para asegurar la buena convivencia del curso.",
+                "Ten por seguro que le daremos el trámite adecuado a tu mensaje."
+            ],
+            "Compañero/a Mediador/a": [
+                "¡Hola! Soy mediador estudiantil. Todos pasamos por momentos complicados, cuenta con nuestro apoyo.",
+                "¡No estás solo/a en esto! Gracias por confiar en la red de compañeros."
+            ],
+            "group": [
+                "Docente Acompañante: Gracias por enviar tu mensaje. Este espacio está creado para apoyarnos mutuamente.",
+                "Compañero/a Anónimo: Te entiendo totalmente, a varios nos pasa algo similar."
+            ]
+        };
+
+        // Initialize from localStorage if present
+        window.onload = function() {
+            const stored = localStorage.getItem('miMundoUser');
+            if (stored) {
+                try {
+                    currentUser = JSON.parse(stored);
+                    applyUserSession();
+                } catch(e) {
+                    console.error("Error loading session:", e);
+                }
+            }
+            renderBoard();
+        };
+
+        // REGISTRATION HANDLER
+        function handleRegistration(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('regNombre').value.trim();
+            const apellido = document.getElementById('regApellido').value.trim();
+            const curso = document.getElementById('regCurso').value.trim();
+            const correo = document.getElementById('regCorreo').value.trim();
+
+            if (!nombre || !apellido || !curso || !correo) return;
+
+            currentUser = { nombre, apellido, curso, correo };
+            localStorage.setItem('miMundoUser', JSON.stringify(currentUser));
+
+            applyUserSession();
+        }
+
+        function applyUserSession() {
+            if (!currentUser) return;
+
+            // Update user badge and identity previews
+            document.getElementById('studentDisplay').textContent = `${currentUser.nombre} (${currentUser.curso})`;
+            document.getElementById('identityPreview').textContent = `${currentUser.nombre} ${currentUser.apellido.charAt(0)}. (${currentUser.curso})`;
+            document.getElementById('userBadge').classList.remove('hidden');
+            document.getElementById('logoutBtn').classList.remove('hidden');
+
+            // Hide auth overlay
+            const overlay = document.getElementById('authOverlay');
+            overlay.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => overlay.style.display = 'none', 500);
+        }
+
+        // LOGOUT LOGIC
+        function promptLogout() {
+            document.getElementById('logoutModal').classList.remove('hidden');
+        }
+
+        function cancelLogout() {
+            document.getElementById('logoutModal').classList.add('hidden');
+        }
+
+        function confirmLogout() {
+            // Clear user data state and storage
+            currentUser = null;
+            localStorage.removeItem('miMundoUser');
+
+            // Hide logout modal
+            cancelLogout();
+
+            // Reset form inputs
+            document.getElementById('registrationForm').reset();
+            document.getElementById('messageForm').reset();
+            document.getElementById('chatInputText').value = '';
+
+            // Hide user badge and logout button in navbar
+            document.getElementById('userBadge').classList.add('hidden');
+            document.getElementById('logoutBtn').classList.add('hidden');
+
+            // Close chat if open
+            closeChatModal();
+
+            // Show registration screen
+            const overlay = document.getElementById('authOverlay');
+            overlay.style.display = 'flex';
+            setTimeout(() => {
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+            }, 50);
+        }
+
+        // Toggle private recipient selection dropdown
+        function togglePrivateOptions(isPrivate) {
+            const container = document.getElementById('privateRecipientContainer');
+            if (isPrivate) {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        // SUBMIT FORM & OPEN CHAT MODAL
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            if (!currentUser) {
+                alert("Debes registrarte primero.");
+                return;
+            }
+
+            const identityMode = document.querySelector('input[name="identityMode"]:checked').value;
+            const category = document.querySelector('input[name="category"]:checked').value;
+            const content = document.getElementById('messageText').value.trim();
+            const chatType = document.querySelector('input[name="chatType"]:checked').value;
+            const recipient = document.getElementById('privateRecipient').value;
+
+            if (!content) return;
+
+            // Determine author signature based on Identity Mode choice
+            const authorSignature = identityMode === 'realName' 
+                ? `👤 ${currentUser.nombre} ${currentUser.apellido.charAt(0)}. (${currentUser.curso})`
+                : '🎭 Anónimo/a';
+
+            // 1. Add post to public wall
+            const themeMap = {
+                "Problema Personal": "pink",
+                "Queja / Inconformidad": "aqua",
+                "Sugerencia": "sky",
+                "Otro Asunto": "purple"
+            };
+
+            const newPost = {
+                id: Date.now(),
+                authorName: authorSignature,
+                category: category,
+                content: content,
+                theme: themeMap[category] || "aqua",
+                time: "Ahora mismo",
+                likes: 1
+            };
+
+            posts.unshift(newPost);
+            renderBoard();
+
+            // 2. Setup Active Chat Session
+            activeChatSession.type = chatType;
+            activeChatSession.recipient = chatType === 'private' ? recipient : 'Grupo de Apoyo General';
+            activeChatSession.senderName = authorSignature;
+            activeChatSession.messages = [
+                {
+                    sender: `${authorSignature} (Tú)`,
+                    text: content,
+                    isUser: true,
+                    time: getCurrentTime()
+                }
+            ];
+
+            // Reset form text
+            document.getElementById('messageText').value = '';
+
+            // 3. Open Chat Interface
+            openChatModal();
+
+            // 4. Trigger Simulated Auto-Response in Chat
+            triggerSimulatedReply();
+        }
+
+        // CHAT MODAL UI LOGIC
+        function openChatModal() {
+            const modal = document.getElementById('chatModal');
+            const title = document.getElementById('chatHeaderTitle');
+            const sub = document.getElementById('chatHeaderSubtitle');
+            const icon = document.getElementById('chatHeaderIcon');
+
+            if (activeChatSession.type === 'private') {
+                title.textContent = `Chat Privado: ${activeChatSession.recipient}`;
+                sub.textContent = `Participando como: ${activeChatSession.senderName}`;
+                sub.className = 'text-xs text-brand-purpleLight font-semibold';
+                icon.className = 'w-10 h-10 btn-rounded bg-brand-purple text-brand-darkBg flex items-center justify-center text-lg font-bold';
+                icon.innerHTML = '<i class="fa-solid fa-user-lock"></i>';
+            } else {
+                title.textContent = 'Grupo de Apoyo';
+                sub.textContent = `Participando como: ${activeChatSession.senderName}`;
+                sub.className = 'text-xs text-brand-aqua font-semibold';
+                icon.className = 'w-10 h-10 btn-rounded bg-brand-aqua text-brand-darkBg flex items-center justify-center text-lg font-bold';
+                icon.innerHTML = '<i class="fa-solid fa-users"></i>';
+            }
+
+            renderChatMessages();
+            modal.classList.remove('hidden');
+        }
+
+        function closeChatModal() {
+            document.getElementById('chatModal').classList.add('hidden');
+        }
+
+        function renderChatMessages() {
+            const box = document.getElementById('chatMessagesBox');
+            box.innerHTML = '';
+
+            activeChatSession.messages.forEach(msg => {
+                const messageWrapper = document.createElement('div');
+                messageWrapper.className = `flex flex-col ${msg.isUser ? 'items-end' : 'items-start'} mb-3`;
+
+                const bubble = document.createElement('div');
+                if (msg.isUser) {
+                    bubble.className = 'max-w-[85%] sm:max-w-[75%] bg-gradient-to-r from-brand-aqua to-brand-sky text-brand-darkBg rounded-2xl rounded-tr-none px-4 py-3 font-medium text-xs sm:text-sm shadow-glow-aqua';
+                } else {
+                    bubble.className = 'max-w-[85%] sm:max-w-[75%] bg-brand-cardBg border border-brand-purple/30 text-gray-200 rounded-2xl rounded-tl-none px-4 py-3 text-xs sm:text-sm shadow-glow-purple';
+                }
+
+                bubble.innerHTML = `
+                    <div class="flex items-center justify-between gap-4 mb-1 text-[10px] opacity-80 border-b border-black/10 pb-1">
+                        <span class="font-bold">${escapeHTML(msg.sender)}</span>
+                        <span>${msg.time}</span>
+                    </div>
+                    <p class="leading-relaxed">${escapeHTML(msg.text)}</p>
+                `;
+
+                messageWrapper.appendChild(bubble);
+                box.appendChild(messageWrapper);
+            });
+
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // Send additional user message in chat
+        function sendChatMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('chatInputText');
+            const text = input.value.trim();
+
+            if (!text) return;
+
+            activeChatSession.messages.push({
+                sender: `${activeChatSession.senderName} (Tú)`,
+                text: text,
+                isUser: true,
+                time: getCurrentTime()
+            });
+
+            input.value = '';
+            renderChatMessages();
+
+            // Trigger follow-up automated response
+            triggerSimulatedReply();
+        }
+
+        // Simulate Typing & Response Logic
+        function triggerSimulatedReply() {
+            const typing = document.getElementById('typingIndicator');
+            const typingName = document.getElementById('typingName');
+
+            const responder = activeChatSession.type === 'private' ? activeChatSession.recipient : 'Orientador / Comunidad';
+            typingName.textContent = responder;
+
+            setTimeout(() => {
+                typing.classList.remove('hidden');
+                
+                const box = document.getElementById('chatMessagesBox');
+                box.scrollTop = box.scrollHeight;
+
+                setTimeout(() => {
+                    typing.classList.add('hidden');
+
+                    let replyList = simulatedResponses[activeChatSession.recipient] || simulatedResponses['group'];
+                    let replyText = replyList[Math.floor(Math.random() * replyList.length)];
+
+                    activeChatSession.messages.push({
+                        sender: responder,
+                        text: replyText,
+                        isUser: false,
+                        time: getCurrentTime()
+                    });
+
+                    renderChatMessages();
+                }, 2200);
+            }, 800);
+        }
+
+        // RENDER ANONYMOUS BOARD
+        function renderBoard(filterCategory = 'all') {
+            const grid = document.getElementById('postsGrid');
+            grid.innerHTML = '';
+
+            const filtered = filterCategory === 'all' 
+                ? posts 
+                : posts.filter(p => p.category === filterCategory);
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 text-gray-500">
+                        <i class="fa-solid fa-comment-slash text-3xl mb-2 text-brand-purple"></i>
+                        <p class="text-xs">No hay expresiones en esta categoría aún.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const styles = {
+                pink: { border: "border-brand-pink/30", text: "text-brand-pink", bg: "bg-brand-pink/10" },
+                aqua: { border: "border-brand-aqua/30", text: "text-brand-aqua", bg: "bg-brand-aqua/10" },
+                sky: { border: "border-brand-sky/30", text: "text-brand-sky", bg: "bg-brand-sky/10" },
+                purple: { border: "border-brand-purple/30", text: "text-brand-purpleLight", bg: "bg-brand-purple/10" }
+            };
+
+            filtered.forEach(post => {
+                const s = styles[post.theme] || styles.aqua;
+                const card = document.createElement('div');
+                card.className = `glass-card rounded-3xl p-6 border ${s.border} flex flex-col justify-between transition-all duration-300 transform hover:-translate-y-1`;
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="px-3 py-1 btn-rounded text-[11px] font-semibold ${s.bg} ${s.text}">
+                                ${post.category}
+                            </span>
+                            <span class="text-[10px] text-gray-500">${post.time}</span>
+                        </div>
+                        <p class="text-gray-200 text-xs sm:text-sm leading-relaxed mb-6 font-light">
+                            "${escapeHTML(post.content)}"
+                        </p>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-800 text-xs text-gray-400">
+                        <span class="font-medium ${post.authorName.includes('Anónimo') ? 'text-brand-aqua' : 'text-brand-pink'}">${escapeHTML(post.authorName)}</span>
+                        <button onclick="likePost(${post.id})" class="flex items-center gap-1 hover:text-brand-pink transition-colors">
+                            <i class="fa-solid fa-heart ${post.liked ? 'text-brand-pink' : ''}"></i>
+                            <span>${post.likes}</span>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function likePost(id) {
+            const p = posts.find(item => item.id === id);
+            if (p) {
+                if (!p.liked) {
+                    p.likes++;
+                    p.liked = true;
+                } else {
+                    p.likes--;
+                    p.liked = false;
+                }
+                renderBoard();
+            }
+        }
+
+        function filterBoard(cat) {
+            document.querySelectorAll('.board-filter-btn').forEach(b => {
+                b.classList.remove('bg-white', 'text-brand-darkBg');
+                b.classList.add('bg-brand-cardBg', 'text-gray-300');
+            });
+            event.target.classList.remove('bg-brand-cardBg', 'text-gray-300');
+            event.target.classList.add('bg-white', 'text-brand-darkBg');
+
+            renderBoard(cat);
+        }
+
+        // Helper Functions
+        function getCurrentTime() {
+            const now = new Date();
+            return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag] || tag)
+            );
+        }
+    </script>
+</body>
+</html>
